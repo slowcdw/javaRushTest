@@ -1,6 +1,8 @@
 package com.game.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.game.entity.Player;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +56,9 @@ public class PlayerController {
     }
 
     @RequestMapping (value = "/rest/players/count", method = RequestMethod.GET)
-    public ResponseEntity<Integer> renderPromotePage (HttpServletRequest request) {
+    public ResponseEntity<Integer> getCount (HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
-        System.out.println("ssssssssssssssssss");
         int playerCount = playerService.playerConditionalCount(parameters);
-
         ModelAndView mv = new ModelAndView();
         mv.setViewName("index");
         return new ResponseEntity<>(
@@ -67,8 +67,8 @@ public class PlayerController {
     }
 
     @RequestMapping(value="/rest/players/{id}", method = RequestMethod.GET)
-    public ResponseEntity<String> updatePlayer(@PathVariable("id") String id) throws IOException {
-        System.out.println("get");
+    public ResponseEntity<String> getPlayer(@PathVariable("id") String id) throws IOException {
+//        System.out.println("get");
         Long lid = validId(id);
         ModelAndView modelAndView = new ModelAndView();
         int playerCount = playerService.playerCount();
@@ -119,6 +119,75 @@ public class PlayerController {
             modelAndView.addObject("page", page);
             playerService.add(player);
         modelAndView.addObject("player", player);
+        StringWriter writer = new StringWriter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(writer, player);
+        String result = writer.toString();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=utf-8");
+        return new ResponseEntity<>(
+                result,
+                headers,
+                HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/rest/players/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> editPlayer(@PathVariable("id") String id, @RequestBody String jsonString) throws IOException {
+        Long lid = validId(id);
+        Player player = playerService.getById(lid);
+        if (player == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "entity not found"
+            );
+        }
+
+        if (jsonString.equals("{}")){
+            StringWriter writer = new StringWriter();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(writer, player);
+            String result = writer.toString();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "text/html; charset=utf-8");
+            return new ResponseEntity<>(
+                    result,
+                    headers,
+                    HttpStatus.OK);
+        }
+
+        ObjectMapper mapper0 = new ObjectMapper();
+        Player playerNew;
+        try{
+            playerNew = mapper0.readValue(jsonString, Player.class);
+            final ObjectNode node = new ObjectMapper().readValue(jsonString, ObjectNode.class);
+            if (node.has("name")) {
+                if (node.get("name").toString().replace("\"","").isEmpty()){
+                    throw new Exception();
+                }
+            }
+        }catch (Exception e){
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "BAD_REQUEST"
+            );
+        }
+        if((playerNew.name != null && playerNew.name.length() > 12)
+                || (playerNew.title != null && playerNew.title.length() > 30) || (playerNew.experience != null && playerNew.experience < 0)
+                || (playerNew.experience != null && playerNew.experience > 10_000_000) || (playerNew.getBirthday() != null && playerNew.getBirthday() < 0)
+                || (playerNew.getBirthday() != null && playerNew.birthday.getYear() + 1900 < 2000) || (playerNew.getBirthday() != null && playerNew.birthday.getYear() + 1900 > 3000))
+        {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "BAD_REQUEST"
+            );
+        }
+        if (playerNew.getName() != null) player.setName(playerNew.getName());
+        if (playerNew.getTitle() != null) player.setTitle(playerNew.getTitle());
+        if (playerNew.getRace() != null) player.setRace(playerNew.getRace());
+        if (playerNew.getProfession() != null) player.setProfession(playerNew.getProfession());
+        if (playerNew.getBirthday() != null) player.setBirthday(playerNew.getBirthday());
+        if (playerNew.getBanned() != null) player.setBanned(playerNew.getBanned());
+        if (playerNew.getExperience() != null) player.setExperience(playerNew.getExperience());
+        updateLevelPlayer(player);
+
+        playerService.edit(player);
         StringWriter writer = new StringWriter();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(writer, player);

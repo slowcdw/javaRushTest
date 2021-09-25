@@ -1,5 +1,6 @@
 package com.game.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
 @Table(name = "player")
 public class Player {
@@ -150,6 +151,7 @@ public class Player {
     public Long getBirthday() {
 //        DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 //        return df.format(birthday.getTime());
+        if (birthday == null) return null;
         return birthday.getTime();
     }
 

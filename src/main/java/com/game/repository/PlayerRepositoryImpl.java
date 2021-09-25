@@ -84,9 +84,8 @@ public class PlayerRepositoryImpl implements PlayerRepository {
         Integer maxLevel = null;
         String[] vals;
         Session session = sessionFactory.getCurrentSession();
-        System.out.println(1111111);
         for(String key : parameters.keySet()) {
-            System.out.println("key:"+key);
+//            System.out.println("key:"+key);
             switch (key){
                 case ("name"):
                     vals = parameters.get(key);
@@ -145,17 +144,17 @@ public class PlayerRepositoryImpl implements PlayerRepository {
                     break;
             }
         }
-        System.out.println("name:"+name);
-        System.out.println("title:"+title);
-        System.out.println("race:"+race);
-        System.out.println("profession:"+profession);
-        System.out.println("after:"+after);
-        System.out.println("before:"+before);
-        System.out.println("banned:"+banned);
-        System.out.println("minExperience:"+minExperience);
-        System.out.println("maxExperience:"+maxExperience);
-        System.out.println("minLevel:"+minLevel);
-        System.out.println("maxLevel:"+maxLevel);
+//        System.out.println("name:"+name);
+//        System.out.println("title:"+title);
+//        System.out.println("race:"+race);
+//        System.out.println("profession:"+profession);
+//        System.out.println("after:"+after);
+//        System.out.println("before:"+before);
+//        System.out.println("banned:"+banned);
+//        System.out.println("minExperience:"+minExperience);
+//        System.out.println("maxExperience:"+maxExperience);
+//        System.out.println("minLevel:"+minLevel);
+//        System.out.println("maxLevel:"+maxLevel);
 
         return session.createQuery("select count(*) from Player where " +
                 "level >= coalesce("+minLevel+", level) " +
