@@ -11,8 +11,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Repository
 public class PlayerRepositoryImpl implements PlayerRepository {
@@ -68,12 +69,14 @@ public class PlayerRepositoryImpl implements PlayerRepository {
 
     @Override
     public int playerConditionalCount(Map<String, String[]> parameters) {
+        GregorianCalendar calendar = new GregorianCalendar(3000, Calendar.JANUARY , 01);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-DD");
         String name = "";
         String title = "";
         String race = null;
         String profession = null;
-        Long after = null;
-        Long before = null;
+        Long after = 0L;
+        Long before = calendar.getTimeInMillis();
         Boolean banned = null;
         Integer minExperience = null;
         Integer maxExperience = null;
@@ -163,6 +166,9 @@ public class PlayerRepositoryImpl implements PlayerRepository {
                         "and title like '%"+title+"%'" +
                         "and race = coalesce("+race+",race)" +
                         "and profession = coalesce("+profession+",profession)" +
+                        "and banned = coalesce("+banned+",banned)" +
+                        "and birthday <= '"+ df.format(before) +"'" +
+                        "and birthday >= '"+ df.format(after) +"'" +
                         "and banned = coalesce("+banned+",banned)"
                 , Number.class).getSingleResult().intValue();
     }
