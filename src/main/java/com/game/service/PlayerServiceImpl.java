@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @org.springframework.stereotype.Service
 public class PlayerServiceImpl implements PlayerService {
@@ -51,5 +52,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Transactional
     public int playerCount() {
         return playerRepository.playerCount();
+    }
+
+    @Override
+    @Transactional
+    public int playerConditionalCount(Map<String, String[]> parameters){
+        return playerRepository.playerConditionalCount(parameters);
     }
 }

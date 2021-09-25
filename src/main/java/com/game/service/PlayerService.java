@@ -3,6 +3,7 @@ package com.game.service;
 import com.game.entity.Player;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PlayerService {
     List<Player> allPlayers();
@@ -12,4 +13,6 @@ public interface PlayerService {
     Player getById(Long id);
 
     int playerCount();
+
+    int playerConditionalCount(Map<String, String[]> parameters);
 }

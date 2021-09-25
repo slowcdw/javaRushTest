@@ -56,17 +56,13 @@ public class PlayerController {
     @RequestMapping (value = "/rest/players/count", method = RequestMethod.GET)
     public ResponseEntity<Integer> renderPromotePage (HttpServletRequest request) {
         Map<String, String[]> parameters = request.getParameterMap();
-        for(String key : parameters.keySet()) {
-            System.out.println(key);
-            String[] vals = parameters.get(key);
-            for(String val : vals)
-                System.out.println(" -> " + val);
-        }
+        System.out.println("ssssssssssssssssss");
+        int playerCount = playerService.playerConditionalCount(parameters);
 
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("test");
+        mv.setViewName("index");
         return new ResponseEntity<>(
-                10,
+                playerCount,
                 HttpStatus.OK);
     }
 
