@@ -20,8 +20,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional
-    public List<Player> allPlayers() {
-        return playerRepository.allPlayers();
+    public List<Player> allPlayers(Map<String, String[]> parameters) {
+        return playerRepository.allPlayers(parameters);
     }
 
     @Override

@@ -29,14 +29,14 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView getPlayersList() {
-        List<Player> players = playerService.allPlayers();
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index");
-        modelAndView.addObject("playerList", players);
-        return modelAndView;
-    }
+//    @RequestMapping(value = "/", method = RequestMethod.GET)
+//    public ModelAndView getPlayersList() {
+//        List<Player> players = playerService.allPlayers();
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("index");
+//        modelAndView.addObject("playerList", players);
+//        return modelAndView;
+//    }
 
 
 
@@ -65,6 +65,26 @@ public class PlayerController {
                 playerCount,
                 HttpStatus.OK);
     }
+
+    @RequestMapping (value = "/rest/players", method = RequestMethod.GET)
+    public ResponseEntity<String> getPlayersList (HttpServletRequest request) throws IOException {
+        Map<String, String[]> parameters = request.getParameterMap();
+        List<Player> playerList = playerService.allPlayers(parameters);
+
+        StringWriter writer = new StringWriter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(writer, playerList);
+
+        String result = writer.toString();
+//        System.out.println(result);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=utf-8");
+        return new ResponseEntity<>(
+                result,
+                headers,
+                HttpStatus.OK);
+    }
+
 
     @RequestMapping(value="/rest/players/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer(@PathVariable("id") String id) throws IOException {

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface PlayerService {
-    List<Player> allPlayers();
+    List<Player> allPlayers(Map<String, String[]> parameters);
     void add(Player player);
     void delete(Player player);
     void edit(Player player);
