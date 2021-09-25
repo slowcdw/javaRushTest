@@ -33,7 +33,8 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     @SuppressWarnings("unchecked")
     public List<Player> allPlayers(Map<String, String[]> parameters) {
         GregorianCalendar calendar = new GregorianCalendar(3000, Calendar.JANUARY , 01);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
         String name = "";
         String title = "";
         String race = null;
@@ -137,7 +138,8 @@ public class PlayerRepositoryImpl implements PlayerRepository {
 //        System.out.println("maxExperience:"+maxExperience);
 //        System.out.println("minLevel:"+minLevel);
 //        System.out.println("maxLevel:"+maxLevel);
-
+        System.out.println(df.format(before));
+        System.out.println(df.format(after));
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("from Player where " +
                         "level >= coalesce("+minLevel+", level) " +
@@ -207,7 +209,7 @@ public class PlayerRepositoryImpl implements PlayerRepository {
     @Override
     public int playerConditionalCount(Map<String, String[]> parameters) {
         GregorianCalendar calendar = new GregorianCalendar(3000, Calendar.JANUARY , 01);
-        DateFormat df = new SimpleDateFormat("yyyy-MM-DD");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String name = "";
         String title = "";
         String race = null;
